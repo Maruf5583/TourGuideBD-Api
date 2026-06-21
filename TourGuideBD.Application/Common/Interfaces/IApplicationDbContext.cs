@@ -1,0 +1,46 @@
+﻿using Microsoft.EntityFrameworkCore;
+using TourGuideBD.Domain.Entities.Audit;
+using TourGuideBD.Domain.Entities.Location;
+using TourGuideBD.Domain.Entities.PlaceDetails;
+using TourGuideBD.Domain.Entities.Realtime;
+using TourGuideBD.Domain.Entities.Reviews;
+using TourGuideBD.Domain.Entities.Trip;
+using TourGuideBD.Domain.Entities.Users;
+
+namespace TourGuideBD.Application.Common.Interfaces;
+
+public interface IApplicationDbContext
+{
+    DbSet<ApplicationUser> Users { get; }
+
+    DbSet<Division> Divisions { get; }
+    DbSet<District> Districts { get; }
+    DbSet<Upazila> Upazilas { get; }
+    DbSet<Place> Places { get; }
+    DbSet<PlacePhoto> PlacePhotos { get; }
+    DbSet<PlaceCategory> PlaceCategories { get; }
+    DbSet<PlaceCategoryMap> PlaceCategoryMaps { get; }
+    DbSet<PlaceTag> PlaceTags { get; }
+
+    DbSet<Review> Reviews { get; }
+    DbSet<ReviewPhoto> ReviewPhotos { get; }
+    DbSet<ReviewReport> ReviewReports { get; }
+
+    DbSet<TransportType> TransportTypes { get; }
+    DbSet<TransportRate> TransportRates { get; }
+    DbSet<Itinerary> Itineraries { get; }
+    DbSet<ItineraryStop> ItineraryStops { get; }
+
+    DbSet<FavouritePlace> FavouritePlaces { get; }
+    DbSet<VisitHistory> VisitHistories { get; }
+    DbSet<CheckIn> CheckIns { get; }
+    DbSet<SavedDistrict> SavedDistricts { get; }
+
+    DbSet<LiveVisitor> LiveVisitors { get; }
+    DbSet<WeatherAlert> WeatherAlerts { get; }
+    DbSet<Broadcast> Broadcasts { get; }
+
+    DbSet<AuditLog> AuditLogs { get; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+}
