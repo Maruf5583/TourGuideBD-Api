@@ -13,6 +13,8 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
         builder.Property(p => p.Name).IsRequired().HasMaxLength(150);
         builder.Property(p => p.NameBn).IsRequired().HasMaxLength(150);
         builder.Property(p => p.Description).HasMaxLength(4000);
+        builder.Property(p => p.OpeningHours).HasMaxLength(100);
+        builder.Property(p => p.ClosingHours).HasMaxLength(100);
 
         builder.Property(p => p.EntryFee).HasColumnType("decimal(10,2)");
 

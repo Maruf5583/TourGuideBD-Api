@@ -22,12 +22,21 @@ public class CreatePlaceCommand : IRequest<int>, IAuditableRequest
     public decimal EntryFee { get; set; }
     public BestSeason BestSeason { get; set; } = BestSeason.AllYear;
 
+    public string? OpeningHours { get; set; }
+    public string? ClosingHours { get; set; }
+
     public int DivisionId { get; set; }
     public int DistrictId { get; set; }
     public int? UpazilaId { get; set; }
 
     public List<int> CategoryIds { get; set; } = new();
     public List<string> Tags { get; set; } = new();
+
+    /// <summary>
+    /// Photo URLs — already uploaded via /api/v1/places/upload-photos
+    /// Maximum 5 photos
+    /// </summary>
+    public List<string> PhotoUrls { get; set; } = new();
 
     public string? SubmittedByUserId { get; set; }
     public bool AutoApprove { get; set; } = false;
@@ -53,9 +62,17 @@ public class CreatePlaceCommandValidator : AbstractValidator<CreatePlaceCommand>
         RuleFor(x => x.DivisionId).GreaterThan(0);
         RuleFor(x => x.DistrictId).GreaterThan(0);
 
-        RuleFor(x => x.CategoryIds).NotEmpty().WithMessage("At least one category is required.");
+        RuleFor(x => x.CategoryIds)
+            .NotEmpty().WithMessage("At least one category is required.");
+
+        RuleFor(x => x.OpeningHours).MaximumLength(100);
+        RuleFor(x => x.ClosingHours).MaximumLength(100);
 
         RuleForEach(x => x.Tags).MaximumLength(50);
+
+        RuleFor(x => x.PhotoUrls)
+            .Must(p => p.Count <= 5)
+            .WithMessage("Maximum 5 photos allowed.");
     }
 }
 
@@ -70,16 +87,24 @@ public class CreatePlaceCommandHandler : IRequestHandler<CreatePlaceCommand, int
 
     public async Task<int> Handle(CreatePlaceCommand request, CancellationToken cancellationToken)
     {
-        var divisionExists = await _context.Divisions.AnyAsync(d => d.Id == request.DivisionId, cancellationToken);
-        if (!divisionExists) throw new NotFoundException(nameof(Division), request.DivisionId);
+        var divisionExists = await _context.Divisions
+            .AnyAsync(d => d.Id == request.DivisionId, cancellationToken);
+        if (!divisionExists)
+            throw new NotFoundException(nameof(Division), request.DivisionId);
 
-        var districtExists = await _context.Districts.AnyAsync(d => d.Id == request.DistrictId && d.DivisionId == request.DivisionId, cancellationToken);
-        if (!districtExists) throw new NotFoundException(nameof(District), request.DistrictId);
+        var districtExists = await _context.Districts
+            .AnyAsync(d => d.Id == request.DistrictId
+                && d.DivisionId == request.DivisionId, cancellationToken);
+        if (!districtExists)
+            throw new NotFoundException(nameof(District), request.DistrictId);
 
         if (request.UpazilaId.HasValue)
         {
-            var upazilaExists = await _context.Upazilas.AnyAsync(u => u.Id == request.UpazilaId.Value && u.DistrictId == request.DistrictId, cancellationToken);
-            if (!upazilaExists) throw new NotFoundException("Upazila", request.UpazilaId.Value);
+            var upazilaExists = await _context.Upazilas
+                .AnyAsync(u => u.Id == request.UpazilaId.Value
+                    && u.DistrictId == request.DistrictId, cancellationToken);
+            if (!upazilaExists)
+                throw new NotFoundException("Upazila", request.UpazilaId.Value);
         }
 
         var categories = await _context.PlaceCategories
@@ -88,7 +113,9 @@ public class CreatePlaceCommandHandler : IRequestHandler<CreatePlaceCommand, int
 
         if (categories.Count != request.CategoryIds.Distinct().Count())
         {
-            throw new NotFoundException("One or more PlaceCategory ids are invalid.", string.Join(",", request.CategoryIds));
+            throw new NotFoundException(
+                "One or more PlaceCategory ids are invalid.",
+                string.Join(",", request.CategoryIds));
         }
 
         var place = new Place
@@ -100,22 +127,42 @@ public class CreatePlaceCommandHandler : IRequestHandler<CreatePlaceCommand, int
             Longitude = request.Longitude,
             EntryFee = request.EntryFee,
             BestSeason = request.BestSeason,
+            OpeningHours = request.OpeningHours,
+            ClosingHours = request.ClosingHours,
             DivisionId = request.DivisionId,
             DistrictId = request.DistrictId,
             UpazilaId = request.UpazilaId,
             SubmittedByUserId = request.SubmittedByUserId,
-            ApprovalStatus = request.AutoApprove ? ApprovalStatus.Approved : ApprovalStatus.Pending,
+            ApprovalStatus = request.AutoApprove
+                ? ApprovalStatus.Approved
+                : ApprovalStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
 
         foreach (var category in categories)
         {
-            place.CategoryMaps.Add(new PlaceCategoryMap { PlaceCategory = category });
+            place.CategoryMaps.Add(new PlaceCategoryMap
+            {
+                PlaceCategory = category
+            });
         }
 
         foreach (var tag in request.Tags.Distinct())
         {
             place.Tags.Add(new PlaceTag { Tag = tag });
+        }
+
+        // Maximum 5 photos
+        var isFirst = true;
+        foreach (var photoUrl in request.PhotoUrls.Take(5))
+        {
+            place.Photos.Add(new PlacePhoto
+            {
+                Url = photoUrl,
+                IsCover = isFirst,
+                UploadedAt = DateTime.UtcNow
+            });
+            isFirst = false;
         }
 
         _context.Places.Add(place);

@@ -28,6 +28,9 @@ public class Place : AuditableEntity
     public int? UpazilaId { get; set; }
     public Upazila? Upazila { get; set; }
 
+    public string? OpeningHours { get; set; }
+    public string? ClosingHours { get; set; }
+
     public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Pending;
 
     // Whether submitted by a normal user (place discovery feature)

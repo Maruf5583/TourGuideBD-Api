@@ -7,6 +7,7 @@ using TourGuideBD.Application.Features.Places.Commands.ApprovePlace;
 using TourGuideBD.Application.Features.Places.Commands.CreatePlace;
 using TourGuideBD.Application.Features.Places.Commands.DeletePlace;
 using TourGuideBD.Application.Features.Places.Commands.UpdatePlace;
+using TourGuideBD.Application.Features.Places.Commands.UploadPlacePhotos;
 using TourGuideBD.Application.Features.Places.Queries.Common;
 using TourGuideBD.Application.Features.Places.Queries.FilterByCategory;
 using TourGuideBD.Application.Features.Places.Queries.GetNearbyPlaces;
@@ -134,6 +135,16 @@ public class PlacesController : ControllerBase
 
         await _mediator.Send(command);
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("upload-photos")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(List<string>), 200)]
+    public async Task<ActionResult<List<string>>> UploadPlacePhotos(List<IFormFile> files)
+    {
+        var urls = await _mediator.Send(new UploadPlacePhotosCommand { Files = files });
+        return Ok(urls);
     }
 
     /// <summary>

@@ -23,6 +23,9 @@ public class PlaceDetailDto
     public double AverageRating { get; set; }
     public int TotalReviews { get; set; }
 
+    public string? OpeningHours { get; set; }
+    public string? ClosingHours { get; set; }
+
     public List<PlacePhotoDto> Photos { get; set; } = new();
     public List<string> Categories { get; set; } = new();
     public List<string> Tags { get; set; } = new();

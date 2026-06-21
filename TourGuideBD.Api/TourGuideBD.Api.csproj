@@ -20,9 +20,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="wwwroot\uploads\place-photos\" />
 		<Folder Include="wwwroot\uploads\review-photos\" />
 		<Folder Include="wwwroot\uploads\user-avatars\" />
-		<Folder Include="wwwroot\uploads\place-photos\" />
 	</ItemGroup>
 
 	<ItemGroup>
