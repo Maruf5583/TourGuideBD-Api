@@ -42,5 +42,8 @@ public interface IApplicationDbContext
 
     DbSet<AuditLog> AuditLogs { get; }
 
+    DbSet<BusStand> BusStands { get; }
+    DbSet<DistrictBusRoute> DistrictBusRoutes { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

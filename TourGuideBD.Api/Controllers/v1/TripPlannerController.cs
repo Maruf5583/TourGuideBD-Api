@@ -9,6 +9,8 @@ using TourGuideBD.Application.Features.TripPlanner.Queries.EstimateTransportCost
 using TourGuideBD.Application.Features.TripPlanner.Queries.EstimateTravelTime;
 using TourGuideBD.Application.Features.TripPlanner.Queries.GetItineraryById;
 using TourGuideBD.Application.Features.TripPlanner.Queries.GetTripBudget;
+using TourGuideBD.Application.Features.TripPlanner.Queries.SmartTripCalculate;
+using TourGuideBD.Domain.Enums;
 
 namespace TourGuideBD.Api.Controllers.v1;
 
@@ -88,6 +90,33 @@ public class TripPlannerController : ControllerBase
         {
             ItineraryId = id,
             UserId = _currentUserService.UserId!
+        });
+
+        return Ok(result);
+    }
+
+
+    /// <summary>
+    /// Smart trip calculator — Bus stand based district route calculation
+    /// User location → Nearest Bus Stand → District Route → Destination
+    /// </summary>
+    [HttpGet("smart-calculate")]
+    public async Task<ActionResult<SmartTripResultDto>> SmartCalculate(
+        [FromQuery] double userLat,
+        [FromQuery] double userLng,
+        [FromQuery] int destinationPlaceId,
+        [FromQuery] int people = 1,
+        [FromQuery] int days = 1,
+        [FromQuery] FoodLevel foodLevel = FoodLevel.Medium)
+    {
+        var result = await _mediator.Send(new SmartTripCalculateQuery
+        {
+            UserLat = userLat,
+            UserLng = userLng,
+            DestinationPlaceId = destinationPlaceId,
+            People = people,
+            Days = days,
+            FoodLevel = foodLevel
         });
 
         return Ok(result);

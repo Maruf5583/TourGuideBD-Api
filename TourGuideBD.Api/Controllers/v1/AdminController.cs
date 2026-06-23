@@ -25,7 +25,7 @@ public class AdminController : ControllerBase
     private readonly ICurrentUserService _currentUserService;
 
     public AdminController(IMediator mediator, ICurrentUserService currentUserService)
-    {
+    { 
         _mediator = mediator;
         _currentUserService = currentUserService;
     }

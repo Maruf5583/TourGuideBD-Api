@@ -48,6 +48,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    public DbSet<BusStand> BusStands => Set<BusStand>();
+    public DbSet<DistrictBusRoute> DistrictBusRoutes => Set<DistrictBusRoute>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -57,5 +60,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         LocationSeedData.Seed(builder);
         PlaceCategorySeedData.Seed(builder);
         TransportSeedData.Seed(builder);
+
+        BusStandSeedData.Seed(builder);
+        DistrictBusRouteSeedData.Seed(builder);
     }
 }
