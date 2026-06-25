@@ -381,6 +381,7 @@ All paginated responses follow this structure:
   "hasPreviousPage": false,
   "hasNextPage": true
 }
+```
 
 ## 🛠️ Technologies Used
 
