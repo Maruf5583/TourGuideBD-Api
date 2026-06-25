@@ -382,13 +382,28 @@ All paginated responses follow this structure:
   "hasNextPage": true
 }
 
-🛠️ Technologies Used
-Framework: ASP.NET Core
+## 🛠️ Technologies Used
 
-API Style: RESTful
+- **Framework:** ASP.NET Core
+- **API Style:** RESTful
+- **Documentation:** OpenAPI 3.0.4 (Swagger/JSON)
+- **Authentication:** JWT Bearer Token
+- **Versioning:** URI versioning (v1)
+- **Architecture:** Clean Architecture / CQRS 
 
-Documentation: OpenAPI 3.0.4
+---
 
-Authentication: JWT Bearer Token
+## 👨‍💻 Developer / Contact
 
-Versioning: URI versioning (v1)
+- **Developed by:Maruf Hasan
+- **Email: marufhasanash@gmail.com
+- **Project:** TourGuideBD API
+
+---
+
+**Generated from OpenAPI Specification v3.0.4**  
+*API Version: v1*  
+*Last Updated: June 2026*
+
+
+
